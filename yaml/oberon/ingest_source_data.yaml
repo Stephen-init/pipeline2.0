@@ -1,0 +1,30 @@
+source_files_path: '/home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/01_Data/02_Import Data/ImportData_Shared'
+source_schema: source_files
+datasets:
+  payslips:
+    absolute_path_list: []
+    file_filters:
+      filename_include: [PIT]
+      filename_exclude: [nan_test, Privileged Confidential,PITT Codes]
+      filepath_exclude: []
+    read_file:
+      password: ''
+      pandas_attributes: {encoding_errors: replace, on_bad_lines: warn, dtype: object}
+  timesheets:
+    absolute_path_list: []
+    file_filters:
+      filename_include: [Timesheets]
+      filename_exclude: [TimeTarget, Detailed, C21]
+      filepath_exclude: []
+    read_file:
+      password: ''
+      pandas_attributes: {encoding_errors: replace, on_bad_lines: warn, dtype: object}
+  master:
+    absolute_path_list: []
+    file_filters:
+      filename_include: [Employee List, "22.07.2022"]
+      filename_exclude: []
+      filepath_exclude: []
+    read_file:
+      password: ''
+      pandas_attributes: {sheet_name: null, header: 1}

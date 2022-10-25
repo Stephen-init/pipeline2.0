@@ -1,0 +1,352 @@
+# ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+# ingest source files to db
+ingest_source_data:
+  source_files_path: '/home/project/A_SHARED_DATA/Clients/Projects/HSF/Wilmot/01_Data/02_Import Data/August2022'
+  schema: source_files
+  datasets:
+    payslips:
+      pandas_attributes: {encoding_errors: "replace", on_bad_lines: warn}
+      filter:
+        filename_include: [MO_Paydata]
+        filename_exclude: []
+        filepath_exclude: []
+    timesheets:
+      pandas_attributes: {encoding_errors: "replace", on_bad_lines: warn}
+      filter:
+        filename_include: [MO_KronosData]
+        filename_exclude: []
+        filepath_exclude: []
+    master:
+      pandas_attributes: {}
+      filter:
+        filename_include: [MO_Masterdata]
+        filename_exclude: []
+        filepath_exclude: []
+
+
+# ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+# create raw datasets for exception testing
+create_raw_datasets:
+  schema: raw_datasets
+  datasets:
+    payslips:
+      filter:
+        filename_include: [MO_Paydata]
+        filename_exclude: []
+      categories:
+        batch1:
+          columns: []
+          functions:
+            func1: {}
+        batch2: 
+          columns: []
+          functions:
+            func1: {}
+        batch3: 
+          columns: []
+          functions:
+            func1: {}
+      unified: []
+    timesheets:
+      filter:
+          filename_include: [MO_Paydata]
+          filename_exclude: []
+      categories:
+        batch1:
+          columns: []
+          functions:
+            func1:
+        batch2: 
+          columns: []
+          functions:
+            func1:
+        batch3: 
+          columns: []
+          functions:
+            func1:
+      unified: []
+    master:
+      filter:
+        filename_include: [MO_Paydata]
+        filename_exclude: []
+      categories:
+        batch1:
+          columns: []
+          functions:
+            func1:
+        batch2: 
+          columns: []
+          functions:
+            func1:
+        batch3: 
+          columns: []
+          functions:
+            func1:
+      unified: []  
+
+# ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+# exception tests to genereate exception report to client
+test_to_check_exceptions:
+  exception_report_path: "/home/project/playground_output/wilmot"
+  schema: exception_test_result
+  datasets:
+    payslips:
+      validation_tests:
+        non_nan: []
+        non_numeric: []
+        non_positive: []
+        non_datetime: []
+        non_isacii:
+        non_duplicate: 
+          subset: []
+        non_overlapping: true
+        broken_records: []
+      inscope_mappings:
+        paycodes: 
+          client_columns: []
+          sentinel_mapping_values:
+        region: 
+          client_columns: []
+          sentinel_mapping_values:
+        employee_classification: 
+          client_columns: []
+          values_in_employee_agreement:
+          cohort_values:
+        employeement_type: 
+          client_columns: []
+          values_in_employee_agreement:
+    timesheets:
+      validation_tests:
+        non_nan: []
+        non_numeric: []
+        non_positive: []
+        non_datetime: []
+        non_isacii:
+        non_duplicate: 
+          subset: []
+        non_overlapping: true
+        broken_records: []
+      inscope_mappings:
+        paycodes: 
+          client_columns: []
+          sentinel_mapping_values:
+        region: 
+          client_columns: []
+          sentinel_mapping_values:
+        employee_classification: 
+          client_columns: []
+          values_in_employee_agreement:
+          cohort_values:
+        employeement_type: 
+          client_columns: []
+          values_in_employee_agreement:
+    master:
+      validation_tests:
+        non_nan: []
+        non_numeric: []
+        non_positive: []
+        non_datetime: []
+        non_isacii:
+        non_duplicate: 
+          subset: []
+        non_overlapping: true
+        broken_records: []
+      inscope_mappings:
+        paycodes: 
+          client_columns: []
+          sentinel_mapping_values:
+        region: 
+          client_columns: []
+          sentinel_mapping_values:
+        employee_classification: 
+          client_columns: []
+          values_in_employee_agreement:
+          cohort_values:
+        employeement_type: 
+          client_columns: []
+          values_in_employee_agreement:
+
+# ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+# create meta datasets
+metadata:
+  schema: metadata
+  # ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+  # define metadata structure -> column name, data types, keys
+  dataset_data_structure:
+    payslips:
+      {}
+    timesheets:
+      {}
+    master:
+      {}
+
+# ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+# filtering metadata and get only data under review
+data_under_review:
+  # ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+  # separate metadata to different datasets
+  dataset1:
+    # ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+    # functions to filter data
+    data_filter_functions:
+      func1:
+      func2:
+    # ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+    # Testing exceptions
+    test_to_check_exceptions:
+      payslips:
+        validation_tests:
+          non_nan: []
+          non_numeric: []
+          non_positive: []
+          non_datetime: []
+          non_isacii:
+          non_duplicate: 
+            subset: []
+          non_overlapping: true
+          broken_records: []
+        inscope_mappings:
+          paycodes: 
+            client_columns: []
+            sentinel_mapping_values:
+          region: 
+            client_columns: []
+            sentinel_mapping_values:
+          employee_classification: 
+            client_columns: []
+            values_in_employee_agreement:
+            cohort_values:
+          employeement_type: 
+            client_columns: []
+            values_in_employee_agreement:
+      timesheets:
+        validation_tests:
+          non_nan: []
+          non_numeric: []
+          non_positive: []
+          non_datetime: []
+          non_isacii:
+          non_duplicate: 
+            subset: []
+          non_overlapping: true
+          broken_records: []
+        inscope_mappings:
+          paycodes: 
+            client_columns: []
+            sentinel_mapping_values:
+          region: 
+            client_columns: []
+            sentinel_mapping_values:
+          employee_classification: 
+            client_columns: []
+            values_in_employee_agreement:
+            cohort_values:
+          employeement_type: 
+            client_columns: []
+            values_in_employee_agreement:
+      master:
+        validation_tests:
+          non_nan: []
+          non_numeric: []
+          non_positive: []
+          non_datetime: []
+          non_isacii:
+          non_duplicate: 
+            subset: []
+          non_overlapping: true
+          broken_records: []
+        inscope_mappings:
+          paycodes: 
+            client_columns: []
+            sentinel_mapping_values:
+          region: 
+            client_columns: []
+            sentinel_mapping_values:
+          employee_classification: 
+            client_columns: []
+            values_in_employee_agreement:
+            cohort_values:
+          employeement_type: 
+            client_columns: []
+            values_in_employee_agreement:
+    # ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+    # Transformations
+    transform:
+      payslips:
+        source_datasets: {payslip: '' ,master: combine} 
+        functions:
+          func1:
+            switch:
+            function_arguments:
+          func2:
+            switch:
+            function_arguments:
+      timesheets:
+        additional_datasets: {timesheets: '' ,master: combine} 
+        functions:
+          func1:
+            switch:
+            function_arguments:
+          func2:
+            switch:
+            function_arguments:
+      master:
+        additional_datasets: {master: combine}
+        functions:
+          func1:
+            switch:
+            function_arguments:
+          func2:
+            switch:
+            function_arguments:
+    # ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+    # load to Sentinel
+    load:
+      Configuration:
+        switch: true
+        ClientId: Oberon
+        BypassVarianceValidators: False
+      EmployeeBase:
+        switch: true
+        transform_dataset: masterEMP
+        final_columns: [EmployeeCode,StartDate,EndDate,DateOfBirth,Source]
+      EmployeeClassification:
+        switch: True
+        transform_dataset: masterSMN
+        final_columns: [EmployeeCode,StartDate,EndDate,Classification,Award]
+      EmployeeEmploymentType:
+        switch: true
+        transform_dataset: masterPOS
+        final_columns: [EmployeeCode,StartDate,EndDate,EmploymentType]
+      EmployeeSetoffStrategy:
+        switch: True
+        transform_dataset: setoffstrategy
+        final_columns: [EmployeeCode,StartDate,EndDate,StrategyName]
+      EmployeeRatesOverTime:
+        switch: true
+        transform_dataset: masterSMN_Hourly_Rate
+        final_columns: [EmployeeCode,StartDate,EndDate,BaseRate]
+      EmployeeCohortsOverTime:
+        switch: true
+        transform_dataset: cohort
+        final_columns: [EmployeeCode,StartDate,EndDate,Cohort]
+      Leave:
+        switch: true
+        transform_dataset: leave
+        final_columns: [EmployeeCode,Start,End,PayCode,ClientPayCodeDescription,Source,LeaveType]
+      Payslip:
+        switch: true
+        transform_dataset: payslips
+        final_columns: [EmployeeCode,PayslipCode,PayslipLineCode,PeriodStart,PeriodEnd,PayCode,Description,ClientPayCodeDescription,Hours,Amount,Classification,Source]
+      Timesheet:
+        switch: true
+        transform_dataset: timesheets
+        final_columns: [EmployeeCode,ClockedIn,ClockedOut,RosteredIn,RosteredOut,UnpaidBreaks,Region,Source]
+      PayCodes:
+        switch: true
+        transform_dataset: paycodes
+        final_columns: [ClientPayCodeDescription,PayCode,PayCategory,IsPartOfOrdinaryTimeEarnings,IsPartOfTotalSalary,IsSubjectToPayrollTax,IsBonusOrCommission,IsPartOfLslBase,IsBaseHours]
+      EmployeeAttributesOverTime:
+        switch: true
+        transform_dataset: paycodes
+        final_columns: [EmployeeCode,StartDate,EndDate,Attribute]

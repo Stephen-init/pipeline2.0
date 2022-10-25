@@ -1,0 +1,136 @@
+schema: raw_datasets
+datasets:
+  payslips:
+    batch1:
+      file_filter:
+        filename_include: []
+        filename_exclude: []
+      table: [
+        Subject_to_LPP_PIT_20070701_to_20080630,
+        Subject_to_LPP_PIT_20080701_to_20090630,
+        Subject_to_LPP_PIT_20090701_to_20100630,
+        Subject_to_LPP_PIT_20100701_to_20110630,
+        Subject_to_LPP_PIT_20110701_to_20120630,
+        Subject_to_LPP_PIT_20120701_to_20130630,
+        Subject_to_LPP_PIT_20130701_to_20140630,
+        Subject_to_LPP_PIT_20140701_to_20150630,
+        Subject_to_LPP_PIT_20150701_to_20160630
+        ]
+      functions:
+        table_filter:
+
+        rename_columns:
+          name_map: {
+            DET_NUMBE: DET_NUMBER,
+            FILLER_01B: FILLER_01,
+            FILLER_01B: FILLER_01,
+            FILLER_03B: FILLER_03,
+            FILLER_04B: FILLER_04,
+            FILLER_05B: FILLER_05,
+            PIN_DT_FRMEX: PIN_DT_FRMEX,
+            PIN_DT_TO_EX: PIN_DT_TO_EX,
+            PIT_ACCR_REVA: PIT_ACCR_REV,
+            PIT_ACC_NUMA: PIT_ACC_NM2,
+            PIT_ACC_TYPEA: PIT_ACC_TYPE,
+            PIT_AMOUNTN: PIT_AMOUNT,
+            PIT_ANAL_GRPA: PIT_ANAL_GRP,
+            PIT_BROKEN_IA: PIT_BROKEN_IA,
+            PIT_CATEGORYA: PIT_CATEGORY,
+            PIT_CODEAA: PIT_CODEA,
+            PIT_COMPANYA: PIT_COMPANY,
+            PIT_COST_GRPA: PIT_COST_GRP,
+            PIT_COS_CENTA: PIT_COS_CENT,
+            PIT_CRED_DEBA: PIT_CRED_DEB,
+            PIT_CURRENCYA: PIT_CURRENCY,
+            PIT_DED_ALWA: PIT_DED_ALW,
+            PIT_DETNUMA: PIT_DETNUM,
+            PIT_HOURSN: PIT_HOURS,
+            PIT_JOB_NUMA: PIT_JOB_NUM,
+            PIT_K3_COM_CA: PIT_K3_COM_C,
+            PIT_K3_COM_TA: PIT_K3_COM_T,
+            PIT_K3_EMPNOA: PIT_K3_EMPNO,
+            PIT_K3_PAYRNA: PIT_K3_PAYRN,
+            PIT_ORGANI00A: PIT_ORGANI00,
+            PIT_ORGANI01A: PIT_ORGANI01,
+            PIT_ORGANI02A: PIT_ORGANI02,
+            PIT_ORGANI03A: PIT_ORGANI03,
+            PIT_ORGANI04A: PIT_ORGANI04,
+            PIT_ORGANI04_S: PIT_ORGANI04_S,
+            PIT_ORGANI05A: PIT_ORGANI05,
+            PIT_ORGANI06A: PIT_ORGANI06,
+            PIT_ORGANI07A: PIT_ORGANI07,
+            PIT_ORGANI08A: PIT_ORGANI08,
+            PIT_ORGANI09A: PIT_ORGANI09,
+            PIT_RATEN: PIT_RATE,
+            PIT_RUN_DATEC: PIT_RUN_DATE,
+            PIT_RUN_END_DATE: PIT_RUN_END_DATE,
+            PIT_RUN_NOA: PIT_RUN_NO,
+            PIT_RUN_START_DATE: PIT_RUN_START_DATE,
+            PIT_SAL_CLSSA: PIT_SAL_CLSS,
+            PIT_SAL_CLSS_S: PIT_SAL_CLSS_S,
+            PIT_SEQN: PIT_SEQ,
+            PIT_SURNAMEA: PIT_SURNAME,
+            SRGTE_KEY_1: SRGTE_KEY_1 ,
+            SRGTE_KEY_2: SRGTE_KEY_2 ,
+            SRGTE_KEY_3: SRGTE_KEY_3 ,
+            Source: Source,
+          }
+    batch2: 
+      filename_include: []
+      filename_exclude: []
+      table: [
+        Subject_to_LPP_PIT_20160701_to_20170630,
+        Subject_to_LPP_PIT_20170701_to_20180630,
+        Subject_to_LPP_PIT_20180701_to_20190630,
+        Subject_to_LPP_PIT_20190701_to_20200630,
+        Subject_to_LPP_PIT_20200701_to_20210630,
+        Subject_to_LPP_PIT_20210701_to_20210930,
+        Subject_to_LPP_PIT_20211001_to_20211231,
+        Subject_to_LPP_PIT_20220401_to_20220630,
+        Subject_to_LPP_PIT_Data_Crush_Rerun_4_Employees_20150701_to_202
+        ]
+      filename_include: []
+      filename_exclude: []
+      functions:
+    batch3: 
+      table: 
+      columns: []
+      functions:
+        func1: {}
+    unified: []
+  timesheets:
+    filter:
+        filename_include: [MO_Paydata]
+        filename_exclude: []
+    categories:
+      batch1:
+        columns: []
+        functions:
+          func1:
+      batch2: 
+        columns: []
+        functions:
+          func1:
+      batch3: 
+        columns: []
+        functions:
+          func1:
+    unified: []
+  master:
+    filter:
+      filename_include: [MO_Paydata]
+      filename_exclude: []
+    categories:
+      batch1:
+        columns: []
+        functions:
+          func1:
+      batch2: 
+        columns: []
+        functions:
+          func1:
+      batch3: 
+        columns: []
+        functions:
+          func1:
+    unified: []  

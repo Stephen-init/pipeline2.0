@@ -1,0 +1,9 @@
+[project]
+PROJECT_NAME= "Oberon"
+PROJECT_YAML_PATH= "/home/playground/yaml/oberon.yaml"
+
+[postgres]
+USER= "stephen"
+PASSWORD= "stephen"
+HOST= "pg_postgres_db"
+PORT= 5432

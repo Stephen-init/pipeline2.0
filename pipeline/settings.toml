@@ -1,0 +1,14 @@
+[pipeline]
+PROJECT_NAME= "oberon"
+CONCURRENCY_LIMIT= 4
+
+
+[postgres]
+USER= "stephen"
+PASSWORD= "stephen"
+HOST= "pg_postgres_db"
+PORT= 5432
+
+
+[mainflow]
+INGEST_SOURCE_DATA = '/home/playground/yaml/oberon/ingest_source_data.yaml'

@@ -1,0 +1,11 @@
+metadata:
+  schema: metadata
+  # ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+  # define metadata structure -> column name, data types, keys
+  dataset_data_structure:
+    payslips:
+      {}
+    timesheets:
+      {}
+    master:
+      {}

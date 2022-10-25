@@ -1,0 +1,27 @@
+payslips:
+  source_datasets: {payslip: '' ,master: combine} 
+  functions:
+    func1:
+      switch:
+      function_arguments:
+    func2:
+      switch:
+      function_arguments:
+timesheets:
+  additional_datasets: {timesheets: '' ,master: combine} 
+  functions:
+    func1:
+      switch:
+      function_arguments:
+    func2:
+      switch:
+      function_arguments:
+master:
+  additional_datasets: {master: combine}
+  functions:
+    func1:
+      switch:
+      function_arguments:
+    func2:
+      switch:
+      function_arguments:

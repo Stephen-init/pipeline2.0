@@ -1,0 +1,3231 @@
+# for future use
+database:
+  host: postgres
+  database: luigi
+  user: analyst
+  password: temp
+  port: 5432
+log:
+  version: 1
+  formatters:
+    standard:
+      format: "%(asctime)s %(name)s - %(levelname)s - %(message)s"
+      datefmt: "%Y-%m-%d %H:%M:%S"
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: INFO
+      formatter: standard
+      stream: ext://sys.stdout
+    file:
+      class: logging.FileHandler
+      level: INFO
+      filename: info.log
+      formatter: standard
+      mode: w
+  loggers:
+    luigiLogger:
+      level: INFO
+      handlers:
+        - file
+      propagate: no
+
+###### project path
+project_path:
+  source_file_root_folder: /home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/01_Data/02_Import Data/ImportData_Shared
+  output_root_folder: /home/project/project_output/oberon
+  exception_report_path: /home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/01_Data/02_Import Data/ImportData_Shared/OberonExceptionReport&SupportingFiles/Privileged & confidential_Further exception report_2022-05-09.xlsx
+  privilege_file_root_path: /home/project/A_SHARED_DATA/Clients/Templates and playbooks/privilege.xlsx
+  
+  
+out_of_scope:
+  switch: False
+  out_of_scope_file: "data/all_employee_out_of_scope.csv"
+
+###### Extract #####
+extract:
+  payslips:
+    switch: true
+    file_filter:
+      include:
+        - PIT
+      exclude:
+        - nan_test
+        - Privileged Confidential
+        - PITT Codes
+    format:
+      varying_header:
+        switch: false
+        id_value: []
+      pandas_attributes:
+        switch: false
+        attributes:
+          skiprows: 0
+          header: 0
+      unified_columns:
+        switch: true
+        target:
+          raw_column_names:
+            - - DET_NUMBER
+              - PIT_RUN_START_DATE
+              - PIT_RUN_END_DATE
+              - PIT_CODEA
+              - create_PIT_CODEA_DESC
+              - PIT_HOURS
+              - PIT_AMOUNT
+              - PIT_RUN_NO
+            - - DET_NUMBERA
+              - PIT_RUN_START_DATE
+              - PIT_RUN_END_DATE
+              - PIT_CODEAA
+              - create_PIT_CODEA_DESC
+              - PIT_HOURSN
+              - PIT_AMOUNTN
+              - PIT_RUN_NOA
+          unified_column_names:
+            - DET_NUMBER
+            - PIT_RUN_START_DATE
+            - PIT_RUN_END_DATE
+            - PIT_CODEA
+            - PIT_CODEA_DESC
+            - PIT_HOURS
+            - PIT_AMOUNT
+            - PIT_RUN_NO
+    function:
+      fill:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+      melt:
+        switch: false
+        aggregate_rows: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        melt_cols:
+          - value_vars:
+              keyword: (Amt)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars:
+              keyword: (Hrs)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Hours
+      unpivot:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        unpivot_cols:
+          - value_vars: dollars
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars: hours
+            var_name: Pay Code
+            value_name: Hours
+      row_filter:
+        switch: false
+        filter:
+          - col: []
+            include:
+              logic: or
+              value: []
+            exclude:
+              logic: or
+              value:
+                - nan value
+          - col: []
+            include:
+              logic: or
+              value:
+                - nan value
+            exclude:
+              logic: or
+              value: []   
+      out_of_scope_filter:
+        switch: False
+        employee_code_field: "Emp Id"
+        exclude_value_out_of_scope: True
+        exclude_employee_out_of_scope: True
+  timesheets:
+    switch: true
+    file_filter:
+      include:
+        - Timesheets
+      exclude:
+        - TimeTarget
+        - Detailed
+        - C21
+    format:
+      varying_header:
+        switch: false
+        id_value: []
+      pandas_attributes:
+        switch: False
+        attributes:
+          skiprows: 0
+          header: 0
+      unified_columns:
+        switch: false
+        target:
+          raw_column_names: []
+          unified_column_names: []
+    function:
+      fill:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+      melt:
+        switch: false
+        aggregate_rows: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        melt_cols:
+          - value_vars:
+              keyword: (Amt)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars:
+              keyword: (Hrs)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Hours
+      unpivot:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        unpivot_cols:
+          - value_vars: dollars
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars: hours
+            var_name: Pay Code
+            value_name: Hours
+      row_filter:
+        switch: False
+        filter:
+          - col:
+              - Shift Type
+            include:
+              logic: and
+              value: [
+                Normal,
+                Buddy Shift,
+                Light Duties
+                ]
+            exclude:
+              logic: or
+              value: []
+      out_of_scope_filter:
+        switch: False
+        employee_code_field: "Emp Id"
+        exclude_value_out_of_scope: True
+        exclude_employee_out_of_scope: True
+  masterEMP:
+    switch: true
+    file_filter:
+      include:
+        - (EMP) - 22.07.2022
+      exclude: []
+    format:
+      varying_header:
+        switch: false
+        id_value: []
+      pandas_attributes:
+        switch: true
+        attributes:
+          skiprows: 0
+          header: 1
+          dtype: 
+            Birth Date: string
+            Joined: string
+            Termination Date: string
+      unified_columns:
+        switch: false
+        target:
+          raw_column_names: []
+          unified_column_names: []
+    function:
+      fill:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+      melt:
+        switch: false
+        aggregate_rows: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        melt_cols:
+          - value_vars:
+              keyword: (Amt)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars:
+              keyword: (Hrs)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Hours
+      unpivot:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        unpivot_cols:
+          - value_vars: dollars
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars: hours
+            var_name: Pay Code
+            value_name: Hours
+      row_filter:
+        switch: false
+        filter:
+          - col:
+              - LeavePaycode
+            include:
+              logic: or
+              value:
+                - nan value
+            exclude:
+              logic: or
+              value: []
+      out_of_scope_filter:
+        switch: False
+        employee_code_field: "Emp Id"
+        exclude_value_out_of_scope: True
+        exclude_employee_out_of_scope: True
+  masterSMN:
+    switch: true
+    file_filter:
+      include:
+        - (SMN) - 22.07.2022
+      exclude: []
+    format:
+      varying_header:
+        switch: false
+        id_value: []
+      pandas_attributes:
+        switch: true
+        attributes:
+          skiprows: 0
+          header: 1
+          dtype: 
+            Termination Date: string
+            Effective Date: string
+      unified_columns:
+        switch: false
+        target:
+          raw_column_names: []
+          unified_column_names: []
+    function:
+      flatten:
+        switch: true
+        index: Staff Member
+        start_date: Effective Date
+        end_date: Effective Date
+        flatcol:
+          - Current Class
+          - Current Class.1
+          - Termination Date
+      fill:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+      melt:
+        switch: false
+        aggregate_rows: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        melt_cols:
+          - value_vars:
+              keyword: (Amt)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars:
+              keyword: (Hrs)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Hours
+      unpivot:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        unpivot_cols:
+          - value_vars: dollars
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars: hours
+            var_name: Pay Code
+            value_name: Hours
+      row_filter:
+        switch: false
+        filter:
+          - col:
+              - LeavePaycode
+            include:
+              logic: or
+              value:
+                - nan value
+            exclude:
+              logic: or
+              value: []
+      out_of_scope_filter:
+        switch: False
+        employee_code_field: "Emp Id"
+        exclude_value_out_of_scope: True
+        exclude_employee_out_of_scope: True
+  masterPOS:
+    switch: true
+    file_filter:
+      include:
+        - (POS) - 22.07.2022
+      exclude: []
+    format:
+      varying_header:
+        switch: false
+        id_value: []
+      pandas_attributes:
+        switch: true
+        attributes:
+          skiprows: 0
+          header: 1
+          dtype: 
+            Position Start: string
+            Position End: string
+      unified_columns:
+        switch: false
+        target:
+          raw_column_names: []
+          unified_column_names: []
+    function:
+      flatten:
+        switch: true
+        index: Staff Member
+        start_date: Position Start
+        end_date: Position Start
+        flatcol:
+          - Employment Status
+          - Termination Date
+      fill:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+      melt:
+        switch: false
+        aggregate_rows: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        melt_cols:
+          - value_vars:
+              keyword: (Amt)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars:
+              keyword: (Hrs)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Hours
+      unpivot:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        unpivot_cols:
+          - value_vars: dollars
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars: hours
+            var_name: Pay Code
+            value_name: Hours
+      row_filter:
+        switch: false
+        filter:
+          - col:
+              - LeavePaycode
+            include:
+              logic: or
+              value:
+                - nan value
+            exclude:
+              logic: or
+              value: []
+      out_of_scope_filter:
+        switch: False
+        employee_code_field: "Emp Id"
+        exclude_value_out_of_scope: True
+        exclude_employee_out_of_scope: True
+  masterSMN_Hourly_Rate:
+    switch: true
+    file_filter:
+      include:
+        - (SMN) - 22.07.2022
+      exclude: []
+    format:
+      varying_header:
+        switch: false
+        id_value: []
+      pandas_attributes:
+        switch: true
+        attributes:
+          skiprows: 0
+          header: 1
+          dtype: 
+            Termination Date: string
+            Effective Date: string
+      unified_columns:
+        switch: false
+        target:
+          raw_column_names: []
+          unified_column_names: []
+    function:
+      flatten:
+        switch: true
+        index: Staff Member
+        start_date: Effective Date
+        end_date: Effective Date
+        flatcol:
+          - Hourly
+          - Termination Date
+      fill:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+      melt:
+        switch: false
+        aggregate_rows: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        melt_cols:
+          - value_vars:
+              keyword: (Amt)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars:
+              keyword: (Hrs)
+              additional_cols:
+                - example_col_1
+                - example_col_2
+                - example_col_3
+            var_name: Pay Code
+            value_name: Hours
+      unpivot:
+        switch: false
+        id_vars:
+          - Emp Id
+          - Pay Period Start
+          - Pay Period End
+        unpivot_cols:
+          - value_vars: dollars
+            var_name: Pay Code
+            value_name: Amount
+          - value_vars: hours
+            var_name: Pay Code
+            value_name: Hours
+      row_filter:
+        switch: false
+        filter:
+          - col:
+              - LeavePaycode
+            include:
+              logic: or
+              value:
+                - nan value
+            exclude:
+              logic: or
+              value: []
+      out_of_scope_filter:
+        switch: False
+        employee_code_field: "Emp Id"
+        exclude_value_out_of_scope: True
+        exclude_employee_out_of_scope: True
+###### Transform Pre Exception #####
+exception_tests:
+  masterEMP:
+    switch: true
+    sources: masterEMP
+    function:
+      change_date_format:
+        switch: true
+        target_col: ['Joined','Termination Date','Birth Date']
+        dayfirst: True
+      fill_null_with_max_date:
+        switch: true
+        target_col: Termination Date
+    settings:
+      - staging: EmployeeCode
+        raw: Staff Member
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: StartDate
+        raw: Joined
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: EndDate
+        raw: Termination Date
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: DateOfBirth
+        raw: Birth Date
+        type: datetime
+        tests:
+          - dob
+        value: {}
+        plugin: {}
+      - staging: Source
+        raw: Source
+        type: string
+        tests: []
+        value: {}
+        plugin: {} 
+      - staging: source_file
+        raw: source_file
+        type: string
+        tests: []
+        value: {}
+        plugin: {} 
+  masterSMN:
+    switch: true
+    sources: masterSMN
+    function:
+      change_date_format:
+        switch: true
+        target_col: ['Effective Date','end_date','Termination Date']
+        dayfirst: True
+      OBERON_fill_null_EndDate_with_terminate_date:
+        switch: true
+        EmployeeCode: 'Staff Member'
+        StartDate: 'Effective Date'
+    settings:
+      - staging: EmployeeCode
+        raw: Staff Member
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: StartDate
+        raw: Effective Date
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: EndDate
+        raw: end_date
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: Classification
+        raw: Current Class
+        type: string
+        tests:
+          - inscope
+        value: {}
+        plugin: {}
+      - staging: Source
+        raw: Source
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: source_file
+        raw: source_file
+        type: string
+        tests: []
+        value: {}
+        plugin: {} 
+      - staging: Termination Date
+        raw: Termination Date
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+  masterPOS:
+    switch: true
+    sources: masterPOS
+    function:
+      change_date_format:
+        switch: true
+        target_col: ['Position Start','end_date','Termination Date']
+        dayfirst: True
+      OBERON_fill_null_EndDate_with_terminate_date:
+        switch: true
+        EmployeeCode: 'Staff Member'
+        StartDate: 'Position Start'
+    settings:
+      - staging: EmployeeCode
+        raw: Staff Member
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: StartDate
+        raw: Position Start
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: EndDate
+        raw: end_date
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: EmploymentType
+        raw: Employment Status
+        type: string
+        tests:
+          - inscope
+        value:
+          EmploymentType: '"FullTime,PartTime,Casual"'
+        plugin: {}
+      - staging: Source
+        raw: Source
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: source_file
+        raw: source_file
+        type: string
+        tests: []
+        value: {}
+        plugin: {} 
+  masterSMN_Hourly_Rate:
+    switch: true
+    sources: masterSMN_Hourly_Rate
+    function:
+      change_date_format:
+        switch: true
+        target_col: ['Effective Date','end_date','Termination Date']
+        dayfirst: True
+      OBERON_fill_null_EndDate_with_terminate_date:
+        switch: true
+        EmployeeCode: 'Staff Member'
+        StartDate: 'Effective Date'
+    settings:
+      - staging: EmployeeCode
+        raw: Staff Member
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: StartDate
+        raw: Effective Date
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: EndDate
+        raw: end_date
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: BaseRate
+        raw: Hourly
+        type: numeric
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: Source
+        raw: Source
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: source_file
+        raw: source_file
+        type: string
+        tests: []
+        value: {}
+        plugin: {} 
+      - staging: Termination Date
+        raw: Termination Date
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+  payslips:
+    switch: true
+    sources: payslips
+    function:
+      change_date_format:
+        switch: true
+        target_col: ['PIT_RUN_START_DATE','PIT_RUN_END_DATE']
+        dayfirst: True
+    test:
+      overlapping_test:
+        switch: true
+        group_records: True
+        key: DET_NUMBER
+        start: PIT_RUN_START_DATE
+        end: PIT_RUN_END_DATE
+    settings:
+      - staging: EmployeeCode
+        raw: DET_NUMBER
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: PeriodStart
+        raw: PIT_RUN_START_DATE
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: PeriodEnd
+        raw: PIT_RUN_END_DATE
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: Description
+        raw: PIT_CODEA_DESC
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: ClientPayCodeDescription
+        raw: PIT_CODEA
+        type: string
+        tests:
+          - inscope
+        value: {PayCode: '"Base Pay,Penalty,Overtime,Annual Leave,Allowance,Paid Leave"'}
+        plugin: {}
+      - staging: Hours
+        raw: PIT_HOURS
+        type: numeric
+        tests:
+          - numeric
+        value: {}
+        plugin: {}
+      - staging: Amount
+        raw: PIT_AMOUNT
+        type: numeric
+        tests:
+          - numeric
+        value: {}
+        plugin: {}
+      - staging: PIT_RUN_NO
+        raw: PIT_RUN_NO
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: Source
+        raw: Source
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: source_file
+        raw: source_file
+        type: string
+        tests: []
+        value: {}
+        plugin: {} 
+  timesheets:
+    switch: true
+    sources: timesheets
+    function:
+      change_date_format:
+        switch: true
+        target_col: ['Pay Start','Pay End','Roster Start Time','Roster End Time','Actual Start Time','Actual End Time']
+        dayfirst: True
+        errors: 'coerce'
+    test:
+      overlapping_test:
+        switch: true
+        group_records: False
+        key: Employee Code
+        start: Pay Start
+        end: Pay End
+      shift_length_test:
+        switch: true
+        start: Pay Start
+        end: Pay End
+        shift_length: 10
+    settings:
+      - staging: EmployeeCode
+        raw: Employee Code
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: ClockedIn
+        raw: Pay Start
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: ClockedOut
+        raw: Pay End
+        type: datetime
+        tests:
+          - date
+        value: {}
+        plugin: {}
+      - staging: RosteredIn
+        raw: Roster Start Time
+        type: datetime
+        tests: ['exclude_nan']
+        value: {}
+        plugin: {}
+      - staging: RosteredOut
+        raw: Roster End Time
+        type: datetime
+        tests: ['exclude_nan']
+        value: {}
+        plugin: {}
+      - staging: Region
+        raw: Location
+        type: string
+        tests:
+          - inscope
+        value:
+          Region: '"National,Qld,Nsw,Act,Vic,Tas,Nt,Sa,Wa,Brisbane"'
+        plugin: {}
+      - staging: Source
+        raw: Source
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging: source_file
+        raw: source_file
+        type: string
+        tests: []
+        value: {}
+        plugin: {} 
+      - staging: Breaks Length
+        raw: Breaks Length
+        type: numeric
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Net Length
+        raw: Net Length
+        type: numeric
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Paid
+        raw: Paid
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Status
+        raw: Status
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Authorisor
+        raw: Authorisor
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Cost
+        raw: Cost
+        type: numeric
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Department
+        raw: Department
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Role
+        raw: Role
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Area
+        raw: Area
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Event
+        raw: Event
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Function
+        raw: Function
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Profile
+        raw: Profile
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Shift Type
+        raw: Shift Type
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Actual Start Time
+        raw: Actual Start Time
+        type: datetime
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Actual End Time
+        raw: Actual End Time
+        type: datetime
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Actual Length
+        raw: Actual Length
+        type: numeric
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Roster Length
+        raw: Roster Length
+        type: numeric
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Comments
+        raw: Comments
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: First Name
+        raw: First Name
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Last Name
+        raw: Last Name
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Employment Type
+        raw: Employment Type
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: LocationUID
+        raw: LocationUID
+        type: numeric
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Day Of Week
+        raw: Day Of Week
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Auto Auth result
+        raw: Auto Auth result
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Hourly Rate
+        raw: Hourly Rate
+        type: numeric
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Pay Rate
+        raw: Pay Rate
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Pay Company
+        raw: Pay Company
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: Role Short Name
+        raw: Role Short Name
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+      - staging: UID
+        raw: UID
+        type: string
+        tests: [exclude_nan]
+        value: {}
+        plugin: {}
+  
+###### Cross Dataset Tests #####
+cross_dataset_tests:
+  membership:
+    switch: True
+    target_col: 
+      EmployeeCode:
+        target_files:
+          ['masterSMN','payslips','timesheets']
+        group_datasets:
+          switch: False
+          groupings:
+            [
+              { key: "", group: [] },
+              { key: "", group: [] },
+            ]
+
+###### Transform Stage One #####  
+transform_stage_one:
+  masterEMP:
+    switch: True
+    sources: masterEMP
+  masterSMN:
+    switch: true
+    sources: masterSMN
+    function:
+      cut_time_interval_by_cutover_point:
+        switch: true
+        cutover: ['2018-12-01']
+        start: StartDate
+        end: EndDate
+      melt:
+        switch: true
+        aggregate_rows: false
+        id_vars:
+          - EmployeeCode
+          - StartDate
+          - EndDate
+          - Source
+          - Current Class
+        melt_cols:
+          - value_vars:
+              keyword: award mapping
+              additional_cols: []
+            var_name: Award
+            value_name: Classification  
+      dataset_filter:
+        switch: true
+        expression: df.loc[((df['EndDate']<=pd.to_datetime('2018-12-01', errors="coerce")) & (df['Award']=='Oberon Victoria 2014 EA'))| ((df['StartDate']>=pd.to_datetime('2018-12-01', errors="coerce")) & (df['Award']=='Oberon Victoria 2017 EA'))]
+    settings:
+      - staging: EmployeeCode
+        staging_two: EmployeeCode
+        type: string
+        plugin: {}
+      - staging: StartDate
+        staging_two: StartDate
+        type: datetime
+        plugin: {}
+      - staging: EndDate
+        staging_two: EndDate
+        type: datetime
+        plugin: {}
+      - staging: Classification
+        staging_two: Classification
+        type: string
+        plugin: {}
+      - staging: Award
+        staging_two: Award
+        type: string
+        plugin: {}
+      - staging: Source
+        staging_two: Source
+        type: string
+        plugin: {} 
+  masterPOS:
+    switch: True
+    sources: [masterPOS,masterSMN]
+    function:
+      #### masterSMN  ###
+      cut_time_interval_by_cutover_point:
+        switch: true
+        sources: masterSMN
+        targets: masterSMN
+        cutover: ['2018-12-01']
+        start: StartDate
+        end: EndDate
+      melt:
+        switch: true
+        sources: masterSMN
+        targets: masterSMN
+        aggregate_rows: false
+        id_vars:
+          - EmployeeCode
+          - StartDate
+          - EndDate
+          - Source
+          - Current Class
+        melt_cols:
+          - value_vars:
+              keyword: award mapping
+              additional_cols: []
+            var_name: Award
+            value_name: Classification  
+      dataset_filter1:
+        switch: true
+        sources: masterSMN
+        targets: masterSMN
+        expression: df.loc[((df['EndDate']<=pd.to_datetime('2018-12-01', errors="coerce")) & (df['Award']=='Oberon Victoria 2014 EA'))| ((df['StartDate']>=pd.to_datetime('2018-12-01', errors="coerce")) & (df['Award']=='Oberon Victoria 2017 EA'))]
+      #### masterPOS ###
+      dataset_filter2:
+        switch: true
+        sources: [masterPOS,masterSMN]
+        targets: masterPOS
+        expression: df['masterPOS'].loc[df['masterPOS']['EmployeeCode'].isin(df['masterSMN']['EmployeeCode'].tolist())]
+      reformat_source:
+        switch: true
+        sources: masterPOS
+        targets: masterPOS
+        col_name: Source
+    settings:
+      - staging: EmployeeCode
+        staging_two: EmployeeCode
+        type: string
+        plugin: {}
+      - staging: StartDate
+        staging_two: StartDate
+        type: datetime
+        plugin: {}
+      - staging: EndDate
+        staging_two: EndDate
+        type: datetime
+        plugin: {}
+      - staging: EmploymentType_x
+        staging_two: EmploymentType
+        type: string
+        plugin: {}
+      - staging: Source
+        staging_two: Source
+        type: string
+        plugin: {}
+  masterSMN_Hourly_Rate:
+    switch: True
+    sources: masterSMN_Hourly_Rate
+  payslips:
+    switch: true
+    sources: payslips
+    function:
+      create_columns:
+        switch: true
+        PayslipCode:
+          column: ''
+          value: 'None'
+          dtype: string
+        PayslipLineCode:
+          column: ''
+          value: 'None'
+          dtype: string
+      payslip_code:
+        switch: true
+        target: PayslipCode
+        keys:
+          - EmployeeCode
+          - PeriodEnd
+      payslip_line_code:
+        switch: true
+        target: PayslipLineCode
+      add_n_extra_day_to_date_value:
+        switch: true
+        date_col_name: 'PeriodEnd'
+        number_of_days: 1
+      example_function_1:
+        switch:
+        sources:
+        targets:
+  timesheets:
+    switch: true
+    sources: [timesheets,masterSMN]
+    function:
+      #### masterSMN  ###
+      cut_time_interval_by_cutover_point:
+        switch: true
+        sources: masterSMN
+        targets: masterSMN
+        cutover: ['2018-12-01']
+        start: StartDate
+        end: EndDate
+      melt:
+        switch: true
+        sources: masterSMN
+        targets: masterSMN
+        aggregate_rows: false
+        id_vars:
+          - EmployeeCode
+          - StartDate
+          - EndDate
+          - Source
+          - Current Class
+        melt_cols:
+          - value_vars:
+              keyword: award mapping
+              additional_cols: []
+            var_name: Award
+            value_name: Classification  
+      dataset_filter1:
+        switch: true
+        sources: masterSMN
+        targets: masterSMN
+        expression: df.loc[((df['EndDate']<=pd.to_datetime('2018-12-01', errors="coerce")) & (df['Award']=='Oberon Victoria 2014 EA'))| ((df['StartDate']>=pd.to_datetime('2018-12-01', errors="coerce")) & (df['Award']=='Oberon Victoria 2017 EA'))]
+      #### timesheets ###
+      row_filter:
+        switch: True
+        sources: timesheets
+        targets: timesheets
+        filter:
+          - col:
+              - Leave Record
+            include:
+              logic: and
+              value: ['no','No','NO']
+            exclude:
+              logic: or
+              value: []
+      create_columns:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+        UnpaidBreaks:
+          column: ''
+          value: 'None'
+          dtype: string
+        Training:
+          column: ''
+          value: 'None'
+          dtype: string
+      dataset_filter2:
+        switch: true
+        sources: [timesheets,masterSMN]
+        targets: timesheets
+        expression: df['timesheets'].loc[df['timesheets']['EmployeeCode'].isin(df['masterSMN']['EmployeeCode'].tolist())]
+      merge:
+        switch: true
+        sources: [timesheets,masterSMN]
+        targets: timesheets
+        left: timesheets
+        right: masterSMN
+        how: left
+        left_on: EmployeeCode
+        right_on: EmployeeCode
+        suffixes: ["","_x"]
+      dataset_filter3:
+        switch: true
+        sources: timesheets
+        expression:  df.loc[((df['ClockedIn']>=df['StartDate']) & (df['ClockedIn']<=df['EndDate'])) | ((df['ClockedOut']>=df['StartDate']) & (df['ClockedOut']<=df['EndDate']))]
+    settings:
+      - staging: EmployeeCode
+        staging_two: EmployeeCode
+        type: string
+        plugin: {}
+      - staging: Award
+        staging_two: Award
+        type: string
+        plugin: {}
+      - staging: ClockedIn
+        staging_two: ClockedIn
+        type: datetime
+        plugin: {}
+      - staging: ClockedOut
+        staging_two: ClockedOut
+        type: datetime
+        plugin: {}
+      - staging: RosteredIn
+        staging_two: RosteredIn
+        type: datetime
+        plugin: {}
+      - staging: RosteredOut
+        staging_two: RosteredOut
+        type: datetime
+        plugin: {}
+      - staging: UnpaidBreaks
+        staging_two: UnpaidBreaks
+        type: string
+        plugin: {}
+      - staging: Region_x
+        staging_two: Region
+        type: string
+        plugin: {}
+      - staging: Source
+        staging_two: Source
+        type: string
+        plugin: {}
+      - staging: Breaks Length
+        staging_two: Breaks Length
+        type: numeric
+        plugin: {}
+      - staging: Net Length
+        staging_two: Net Length
+        type: numeric
+        plugin: {}
+      - staging: Shift Type
+        staging_two: Shift Type
+        type: string
+        plugin: {}
+      - staging: Profile
+        staging_two: Profile
+        type: string
+        plugin: {}
+      - staging: Actual Start Time
+        staging_two: Actual Start Time
+        type: datetime
+        plugin: {}
+      - staging: Actual End Time
+        staging_two: Actual End Time
+        type: datetime
+        plugin: {}
+      - staging: Comments
+        staging_two: Comments
+        type: string
+        plugin: {}
+      - staging: Employment Type
+        staging_two: Employment Type
+        type: string
+        plugin: {}
+      - staging: Department
+        staging_two: Department
+        type: string
+        plugin: {}
+      - staging: Area
+        staging_two: Area
+        type: string
+        plugin: {}
+      - staging: Role
+        staging_two: Role
+        type: string
+        plugin: {}
+      - staging: Hourly Rate
+        staging_two: Hourly Rate
+        type: string
+        plugin: {}
+      - staging: Status
+        staging_two: Status
+        type: string
+        plugin: {}
+      - staging: Location Attribute
+        staging_two: Location Attribute
+        type: string
+        plugin: {}
+      - staging: UID
+        staging_two: UID
+        type: string
+        plugin: {}
+  leave:
+    switch: true
+    sources: timesheets
+    function:
+      #### timesheets ###
+      row_filter:
+        switch: True
+        filter:
+          - col:
+              - Leave Record
+            include:
+              logic: and
+              value: ['yes','Yes','YES']
+            exclude:
+              logic: or
+              value: []
+  cohort:
+    switch: true
+    sources: masterSMN
+    function:
+      dataset_filter1:
+        switch: true
+        expression: df.loc[((df['Oberon Victoria 2014 EA award mapping'].isna()) & (df['Oberon Victoria 2017 EA award mapping'].isna()))==False]
+      cut_time_interval_by_cutover_point:
+        switch: true
+        cutover: ['2018-12-01']
+        start: StartDate
+        end: EndDate
+      melt:
+        switch: true
+        aggregate_rows: False
+        id_vars:
+          - EmployeeCode
+          - StartDate
+          - EndDate
+        melt_cols:
+          - value_vars:
+              keyword: Cohort mapping
+              additional_cols: []
+            var_name: EA
+            value_name: Cohort
+      dataset_filter3:
+        switch: true
+        expression: df.loc[((df['EndDate']<=pd.to_datetime('2018-12-01', errors="coerce")) & (df['EA'].str.contains('2014')))| ((df['StartDate']>=pd.to_datetime('2018-12-01', errors="coerce")) & (df['EA'].str.contains('2017')))]
+    settings:
+      - staging: EmployeeCode
+        staging_two: EmployeeCode
+        type: string
+        plugin: {}
+      - staging: StartDate
+        staging_two: StartDate
+        type: datetime
+        plugin: {}
+      - staging: EndDate
+        staging_two: EndDate
+        type: datetime 
+        plugin: {}
+      - staging: Cohort
+        staging_two: Cohort
+        type: string
+        plugin: {}
+
+###### Transform Stage Two #####  
+transform_stage_two:
+  masterEMP:
+    switch: True
+    sources: [masterEMP,masterSMN]
+    function:
+      dataset_filter:
+        switch: true
+        sources: [masterEMP,masterSMN]
+        targets: masterEMP
+        expression: df['masterEMP'].loc[df['masterEMP']['EmployeeCode'].isin(df['masterSMN']['EmployeeCode'].tolist())]
+      reformat_source:
+        switch: true
+        sources: masterEMP
+        targets: masterEMP
+        col_name: Source
+    settings:
+      - staging_two: EmployeeCode
+        final: EmployeeCode
+        type: string
+        plugin: {}
+      - staging_two: StartDate
+        final: StartDate
+        type: datetime
+        plugin: {}
+      - staging_two: EndDate
+        final: EndDate
+        type: datetime
+        plugin: {}
+      - staging_two: DateOfBirth
+        final: DateOfBirth
+        type: datetime
+        plugin: {}
+      - staging_two: Source
+        final: Source
+        type: string
+        plugin: {} 
+  masterSMN:
+    switch: true
+    sources: [masterSMN,timesheets,cohort,masterPOS,masterEMP,payslips]
+    function:
+      OBERON_paypoint_progression_non_enrn_four:
+        switch: false
+        sources: [masterSMN,payslips]
+        targets: masterSMN
+        exception_report: "/home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/01_Data/02_Import Data/ImportData_Shared/OberonExceptionReport&SupportingFiles/Privileged & confidential_Further exception report_2022-05-09.xlsx"
+        oberon_2014: "/home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/03_Pay Rules/02_Pay Rules/Pilot/Pay Rules_Shared/20220513 Privileged confidential - Project Oberon - 2014 Vic EA pay rule scoping for May.xlsx"
+      OBERON_paypoint_progression_non_enrn_seven:
+        switch: false
+        sources: [masterSMN,payslips]
+        targets: masterSMN
+        exception_report: "/home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/01_Data/02_Import Data/ImportData_Shared/OberonExceptionReport&SupportingFiles/Privileged & confidential_Further exception report_2022-05-09.xlsx"
+        oberon_2017: "/home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/03_Pay Rules/02_Pay Rules/Pilot/Pay Rules_Shared/20220511 Privileged  confidential - Project Oberon - 2017 Vic EA payrule scoping for May.XLSX1.xlsx"
+        qual_file: "/home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/01_Data/03_Data Validation/Subject to LPP - PCW Unqualified Employee Cohort.xlsx"
+      OBERON_temp_function_paypoint_progression_en_rn:
+        switch: true
+        sources: masterSMN
+        targets: masterSMN
+        en_rn_classification_file: /home/dev/yc_analytics/oberon/hasi_ppp_en_rn_result.csv
+      reformat_source:
+        switch: true
+        sources: masterSMN
+        targets: masterSMN
+        col_name: Source
+      dataset_filter:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+        expression: df.loc[df['Award']=='Oberon Victoria 2014 EA']
+      attributes_over_time_formatter:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+        key_col_list: [EmployeeCode,ClockedIn,ClockedOut]
+        attributes_col_list: ['Location Attribute']
+      OBERON_split_shift_attribute:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+      OBERON_update_rn_classifications_add_region:
+        switch: true
+        sources: [masterSMN, timesheets]
+        targets: masterSMN
+    settings:
+      - staging_two: EmployeeCode
+        final: EmployeeCode
+        type: string
+        plugin: {}
+      - staging_two: StartDate
+        final: StartDate
+        type: datetime
+        plugin: {}
+      - staging_two: EndDate
+        final: EndDate
+        type: datetime
+        plugin: {}
+      - staging_two: Classification
+        final: Classification
+        type: string
+        plugin: {}
+      - staging_two: Award
+        final: Award
+        type: string
+        plugin: {}
+      - staging_two: Source
+        final: Source
+        type: string
+        plugin: {} 
+  masterPOS:
+    switch: True
+    sources: masterPOS
+  masterSMN_Hourly_Rate:
+    switch: True
+    sources: [masterSMN_Hourly_Rate,masterSMN]
+    function:
+      dataset_filter:
+        switch: true
+        sources: [masterSMN_Hourly_Rate,masterSMN]
+        targets: masterSMN_Hourly_Rate
+        expression: df['masterSMN_Hourly_Rate'].loc[df['masterSMN_Hourly_Rate']['EmployeeCode'].isin(df['masterSMN']['EmployeeCode'].tolist())]
+      reformat_source:
+        switch: true
+        sources: masterSMN_Hourly_Rate
+        targets: masterSMN_Hourly_Rate
+        col_name: Source
+    settings:
+      - staging_two: EmployeeCode
+        final: EmployeeCode
+        type: string
+        plugin: {}
+      - staging_two: StartDate
+        final: StartDate
+        type: datetime
+        plugin: {}
+      - staging_two: EndDate
+        final: EndDate
+        type: datetime
+        plugin: {}
+      - staging_two: BaseRate
+        final: BaseRate
+        type: numeric
+        plugin: {}
+      - staging_two: Source
+        final: Source
+        type: string
+        plugin: {}
+  payslips:
+    switch: True
+    sources: [payslips,masterSMN,masterEMP]
+    function:
+      dataset_filter:
+        switch: true
+        sources: [payslips,masterSMN]
+        targets: payslips
+        expression: df['payslips'].loc[df['payslips']['EmployeeCode'].isin(df['masterSMN']['EmployeeCode'].tolist())]
+      merge:
+        switch: true
+        sources: [payslips,masterSMN]
+        targets: payslips
+        left: payslips
+        right: masterSMN
+        how: left
+        left_on: EmployeeCode
+        right_on: EmployeeCode
+        suffixes: ["","_x"]
+      dataset_filter3:
+        switch: true
+        sources: payslips
+        targets: payslips
+        expression: df.loc[((df['PeriodStart']>=df['StartDate']) & (df['PeriodStart']<=df['EndDate'])) | ((df['PeriodEnd']>=df['StartDate']) & (df['PeriodEnd']<=df['EndDate']))]
+      value_mapper1:
+        switch: true
+        sources: payslips
+        targets: payslips
+        map_to_col_value: False
+        value_mapping: {1: "True",0: "False"}
+        use_regex: False
+        source_col: 'Is Base Hours?'
+        target_col: 'Is Base Hours?'
+      value_mapper2:
+        switch: true
+        sources: payslips
+        targets: payslips
+        map_to_col_value: False
+        value_mapping: {"False": 0}
+        use_regex: False
+        source_col: 'Is Base Hours?'
+        target_col: Hours
+      add_overlapping_identifier:
+        switch: true
+        sources: payslips
+        targets: payslips
+        group_records: True
+        key: EmployeeCode
+        start: PeriodStart
+        end: PeriodEnd
+      OBERON_unify_overlapping_startdate_and_enddate_payslipcode: 
+        switch: true
+        sources: payslips
+        targets: payslips
+      OBERON_add_payrun_index:
+        switch: true
+        sources: payslips
+        targets: payslips
+        payrun_file: /home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/01_Data/02_Import Data/ImportData_Shared/SupportFiles/Subject to LPP - Pay Run Index.xlsx
+      dataset_filter2:
+        switch: true
+        sources: payslips
+        targets: payslips
+        expression: df.loc[df.duplicated(subset=['PayslipLineCode'],keep='first') == False]
+      reformat_source:
+        switch: true
+        sources: payslips
+        targets: payslips
+        col_name: Source
+    settings:
+      - staging_two: EmployeeCode
+        final: EmployeeCode
+        type: string
+        plugin: {}
+      - staging_two: PayslipCode
+        final: PayslipCode
+        type: string
+        plugin: {}
+      - staging_two: PayslipLineCode
+        final: PayslipLineCode
+        type: string
+        plugin: {}
+      - staging_two: PeriodStart
+        final: PeriodStart
+        type: datetime
+        plugin: {}
+      - staging_two: PeriodEnd
+        final: PeriodEnd
+        type: datetime
+        plugin: {}
+      - staging_two: PayCode
+        final: PayCode
+        type: string
+        plugin: {}
+      - staging_two: Description Per G&HSF Mapping
+        final: Description
+        type: string
+        plugin: {}
+      - staging_two: ClientPayCodeDescription
+        final: ClientPayCodeDescription
+        type: string
+        plugin: {}
+      - staging_two: Hours
+        final: Hours
+        type: numeric
+        plugin: {}
+      - staging_two: Amount
+        final: Amount
+        type: numeric
+        plugin: {}
+      - staging_two: PayCategory
+        final: Classification
+        type: string
+        plugin: {}
+      - staging_two: Source
+        final: Source
+        type: string
+        plugin: {}
+      - staging_two: Is Base Hours?
+        final: IsBaseHours
+        type: string
+        plugin: {}
+      - staging_two: overlapping_index
+        final: overlapping_index
+        type: string
+        plugin: {}
+      - staging_two: is_overlapping
+        final: is_overlapping
+        type: string
+        plugin: {}
+      - staging_two: PIT_RUN_NO
+        final: PayRunCode
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+      - staging_two: Pay Types
+        final: PayCycle
+        type: string
+        tests: []
+        value: {}
+        plugin: {}
+  timesheets:
+    switch: true
+    sources: [timesheets,masterPOS]
+    function:
+      value_mapper1:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+        map_to_col_value: False
+        value_mapping: {'Training':'True'}
+        use_regex: True
+        source_col: 'Shift Type'
+        target_col: 'is_Training_Shift'
+      value_mapper2:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+        map_to_col_value: False
+        value_mapping: {'Sleepover Shift':'True'}
+        use_regex: True
+        source_col: 'Shift Type'
+        target_col: 'is_Sleepover_Shift'
+      OBERON_overlapping_shift_pick_longest_shift:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+        key: EmployeeCode
+        start: ClockedIn
+        end: ClockedOut     
+      unpaid_break_between_start_end:
+          switch: true
+          sources: timesheets
+          targets: timesheets
+          target_col: UnpaidBreaks
+          pay_start: 'ClockedIn'
+          pay_end: 'ClockedOut'
+          break_length: 'Breaks Length'
+          break_length_format: hour
+          original_data: False      
+      OERBON_create_unpaid_breaks_on_broken_shift:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+        key: EmployeeCode
+        start: ClockedIn
+        end: ClockedOut
+        shift_length: 4    
+        award: Award
+      simple_pandas_grouper:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+        keys: ['EmployeeCode','shift_index']
+        group_settings:
+          Award: last
+          ClockedIn: min
+          ClockedOut: max
+          RosteredIn: min
+          RosteredOut: max
+          UnpaidBreaks: unique
+          Region: last
+          Source: unique
+          is_Training_Shift: unique
+          is_Sleepover_Shift: unique
+          is_Overlapping_Shift_Longest_Shift_Picked: unique
+          is_Broken_Shift: last
+          broken_shift_detail: unique
+          Breaks Length: unique
+          Net Length: unique       
+          Shift Type: unique
+          Profile: unique
+          Actual Start Time: min
+          Actual End Time: max
+          Comments: unique
+          Employment Type: unique
+          Department: unique
+          Area: unique
+          Role: unique
+          Hourly Rate: unique
+          Status: unique
+          UID: unique
+      add_week_number_and_week_day_to_date:
+        switch: True
+        sources: timesheets
+        targets: timesheets
+        date_column: ClockedIn
+      OBERON_one_week_with_only_one_broken_shift:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+      OBERON_add_one_extra_day_to_public_holiday_working_holics:
+        switch: True
+        sources: [timesheets,masterPOS]
+        targets: timesheets
+        file_path:  "/home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/01_Data/02_Import Data/ImportData_Shared/OberonExceptionReport&SupportingFiles/Privileged & confidential_Further exception report_2022-05-09.xlsx"
+      reformat_source:
+        switch: true
+        sources: timesheets
+        targets: timesheets
+        col_name: Source
+    settings:
+      - staging_two: EmployeeCode
+        final: EmployeeCode
+        type: string
+        plugin: {}
+      - staging_two: Award
+        final: Award
+        type: string
+        plugin: {}
+      - staging_two: ClockedIn
+        final: ClockedIn
+        type: datetime
+        plugin: {}
+      - staging_two: ClockedOut
+        final: ClockedOut
+        type: datetime
+        plugin: {}
+      - staging_two: RosteredIn
+        final: RosteredIn
+        type: datetime
+        plugin: {}
+      - staging_two: RosteredOut
+        final: RosteredOut
+        type: datetime
+        plugin: {}
+      - staging_two: UnpaidBreaks
+        final: UnpaidBreaks
+        type: string
+        plugin: {}
+      - staging_two: Region
+        final: Region
+        type: string
+        plugin: {}
+      - staging_two: Source
+        final: Source
+        type: string
+        plugin: {}
+      - staging_two: shift_index
+        final: shift_index
+        type: string
+        plugin: {}
+      - staging_two: is_Training_Shift
+        final: is_Training_Shift
+        type: string
+        plugin: {}
+      - staging_two: is_Sleepover_Shift
+        final: is_Sleepover_Shift
+        type: string
+        plugin: {}
+      - staging_two: is_Overlapping_Shift_Longest_Shift_Picked
+        final: is_Overlapping_Shift_Longest_Shift_Picked
+        type: string
+        plugin: {}
+      - staging_two: is_Broken_Shift
+        final: is_Broken_Shift
+        type: string
+        plugin: {}
+      - staging_two: broken_shift_detail
+        final: broken_shift_detail
+        type: string
+        plugin: {}
+      - staging_two: week_number
+        final: week_number
+        type: numeric
+        plugin: {}
+      - staging_two: week_day
+        final: week_day
+        type: numeric
+        plugin: {}
+      - staging_two: week_info
+        final: week_info
+        type: string
+        plugin: {}
+      - staging_two: Additional Public Holiday
+        final: Additional Public Holiday
+        type: string
+        plugin: {}
+      - staging_two: holiday_regions
+        final: holiday_regions
+        type: string
+        plugin: {}
+      - staging_two: holiday_name
+        final: holiday_name
+        type: string
+        plugin: {}
+      - staging_two: holiday_date
+        final: holiday_date
+        type: string
+        plugin: {}
+      - staging_two: worked_percentage_in_last_6_month
+        final: worked_percentage_in_last_6_month
+        type: numeric
+        plugin: {}
+      - staging_two: Breaks Length
+        final: Breaks Length
+        type: numeric
+        plugin: {}
+      - staging_two: Net Length
+        final: Net Length
+        type: numeric
+        plugin: {}
+      - staging_two: Shift Type
+        final: Shift Type
+        type: string
+        plugin: {}
+      - staging_two: Profile
+        final: Profile
+        type: string
+        plugin: {}
+      - staging_two: Actual Start Time
+        final: Actual Start Time
+        type: datetime
+        plugin: {}
+      - staging_two: Actual End Time
+        final: Actual End Time
+        type: datetime
+        plugin: {}
+      - staging_two: Comments
+        final: Comments
+        type: string
+        plugin: {}
+      - staging_two: Employment Type
+        final: Employment Type
+        type: string
+        plugin: {}
+      - staging_two: Department
+        final: Department
+        type: string
+        plugin: {}
+      - staging_two: Area
+        final: Area
+        type: string
+        plugin: {}
+      - staging_two: Role
+        final: Role
+        type: string
+        plugin: {}
+      - staging_two: Hourly Rate
+        final: Hourly Rate
+        type: string
+        plugin: {}
+      - staging_two: Status
+        final: Status
+        type: string
+        plugin: {}
+      - staging_two: UID
+        final: UID
+        type: string
+        plugin: {}
+  leave:
+    switch: true
+    sources: [leave,masterSMN,cohort]
+    function:
+      dataset_filter1:
+        switch: true
+        sources: [leave,masterSMN]
+        targets: leave
+        expression: df['leave'].loc[df['leave']['EmployeeCode'].isin(df['masterSMN']['EmployeeCode'].tolist())]
+      merge:
+        switch: true
+        sources: [leave,masterSMN]
+        targets: leave
+        left: leave
+        right: masterSMN
+        how: left
+        left_on: EmployeeCode
+        right_on: EmployeeCode
+        suffixes: ["","_x"]
+      dataset_filter2:
+        switch: true
+        sources: leave
+        targets: leave
+        expression: df.loc[((df['ClockedIn']>=df['StartDate']) & (df['ClockedIn']<=df['EndDate'])) | ((df['ClockedOut']>=df['StartDate']) & (df['ClockedOut']<=df['EndDate']))]
+      add_overlapping_identifier:
+        switch: true
+        sources: leave
+        targets: leave
+        group_records: False
+        key: EmployeeCode
+        start: ClockedIn
+        end: ClockedOut
+      OBERON_overlapping_leave_record_pick_longest:
+        switch: true
+        sources: leave
+        targets: leave
+      matching_financial_year:
+        switch: true
+        sources: leave
+        targets: leave
+        fy_start: 2016
+        fy_end: 2022
+        end: ClockedOut
+      OBERON_personal_leave_conversion:
+        switch: true
+        sources: leave
+        targets: leave
+        sort_keys: ['EmployeeCode','ClockedIn']
+        date_key: 'ClockedIn'
+        group_keys: ['EmployeeCode','financial year']
+        targe_col: Paycode (under 14/17 EA)
+        value: 'Personal leave with evidence'
+      create_columns:
+        switch: true
+        sources: leave
+        targets: leave
+        LeaveType:
+          column: Paycode (under 14/17 EA)
+          value: ''
+          dtype: string
+      create_leave_time_with_leave_hour_taken:
+        switch: true
+        sources: leave
+        targets: leave
+        leave_start: ClockedIn
+        leave_end: ClockedOut
+        leave_hour_taken: Net Length
+      OBERON_add_easter_saturday_to_leave:
+        switch: true
+        sources: [leave,cohort]
+        targets: leave
+      reformat_source:
+        switch: true
+        sources: leave
+        targets: leave
+        col_name: Source
+    settings:
+      - staging_two: EmployeeCode
+        final: EmployeeCode
+        type: string
+        plugin: {}
+      - staging_two: ClockedIn
+        final: Start
+        type: datetime
+        plugin: {}
+      - staging_two: ClockedOut
+        final: End
+        type: datetime
+        plugin: {}
+      - staging_two: Paycode (under 14/17 EA)
+        final: PayCode
+        type: string
+        plugin: {}
+      - staging_two: Paycode_client
+        final: ClientPayCodeDescription
+        type: string
+        plugin: {}
+      - staging_two: Source
+        final: Source
+        type: string
+        plugin: {} 
+      - staging_two: LeaveType
+        final: LeaveType
+        type: string
+        plugin: {} 
+      - staging_two: Shift Type
+        final: Shift Type
+        type: string
+        plugin: {} 
+      - staging_two: financial year
+        final: financial year
+        type: string
+        plugin: {} 
+      - staging_two: attribute_personal_leave_taken_ranking
+        final: attribute_personal_leave_taken_ranking
+        type: string
+        plugin: {} 
+      - staging_two: attribute_personal_leave_conversion
+        final: attribute_personal_leave_conversion
+        type: string
+        plugin: {} 
+      - staging_two: attribute_is_paid_personal_leave
+        final: attribute_is_paid_personal_leave
+        type: string
+        plugin: {} 
+      - staging_two: Breaks Length
+        final: Breaks Length
+        type: numeric
+        plugin: {}
+      - staging_two: Net Length
+        final: Net Length
+        type: numeric
+        plugin: {}
+      - staging_two: Profile
+        final: Profile
+        type: string
+        plugin: {}
+      - staging_two: Actual Start Time
+        final: Actual Start Time
+        type: datetime
+        plugin: {}
+      - staging_two: Actual End Time
+        final: Actual End Time
+        type: datetime
+        plugin: {}
+      - staging_two: Comments
+        final: Comments
+        type: string
+        plugin: {}
+      - staging_two: Employment Type
+        final: Employment Type
+        type: string
+        plugin: {}
+      - staging_two: Department
+        final: Department
+        type: string
+        plugin: {}
+      - staging_two: Area
+        final: Area
+        type: string
+        plugin: {}
+      - staging_two: Role
+        final: Role
+        type: string
+        plugin: {}
+      - staging_two: Hourly Rate
+        final: Hourly Rate
+        type: string
+        plugin: {}
+      - staging_two: Status
+        final: Status
+        type: string
+        plugin: {}
+      - staging_two: UID
+        final: UID
+        type: string
+        plugin: {}
+  setoffstrategy:
+    switch: True
+    sources: [masterEMP,masterSMN]
+    function:
+      dataset_filter:
+        switch: true
+        sources: [masterEMP,masterSMN]
+        targets: masterEMP
+        expression: df['masterEMP'].loc[df['masterEMP']['EmployeeCode'].isin(df['masterSMN']['EmployeeCode'].tolist())]
+      create_columns:
+        switch: true
+        sources: masterEMP
+        targets: masterEMP
+        StrategyName:
+          column: ''
+          value: 'Financial Year Cross Pay Category'
+          dtype: string
+    settings:
+      - staging_two: EmployeeCode
+        final: EmployeeCode
+        type: string
+        plugin: {}
+      - staging_two: StartDate
+        final: StartDate
+        type: datetime
+        plugin: {}
+      - staging_two: EndDate
+        final: EndDate
+        type: datetime
+        plugin: {}
+      - staging_two: StrategyName
+        final: StrategyName
+        type: string
+        plugin: {}       
+  cohort:
+    switch: true
+    sources: cohort
+    function:
+      OBERON_add_additional_cohort_leisure_lifestyle_pwc:
+        switch: true
+        file_path:  "/home/project/A_SHARED_DATA/Clients/Projects/HSF/Oberon/03_Pay Rules/03_Instructions/Subject to LPP - PCW and L&L Employee Cohort.xlsx"
+      add_overlapping_identifier:
+        switch: true
+        group_records: True
+        key: [EmployeeCode,Cohort]
+        start: StartDate
+        end: EndDate
+      OBERON_remove_overlapping_cohort_and_flatten_dates:
+        switch: true
+    settings:
+      - staging_two: EmployeeCode
+        final: EmployeeCode
+        type: string
+        plugin: {}
+      - staging_two: StartDate
+        final: StartDate
+        type: datetime
+        plugin: {}
+      - staging_two: EndDate
+        final: EndDate
+        type: datetime
+        plugin: {}
+      - staging_two: Cohort
+        final: Cohort
+        type: string
+        plugin: {}
+  paycodes:
+    switch: True
+    sources: [payslips,masterSMN]
+    function:
+      dataset_filter:
+        switch: true
+        sources: [payslips,masterSMN]
+        targets: payslips
+        expression: df['payslips'].loc[df['payslips']['EmployeeCode'].isin(df['masterSMN']['EmployeeCode'].tolist())]
+      merge:
+        switch: true
+        sources: [payslips,masterSMN]
+        left: payslips
+        right: masterSMN
+        how: left
+        left_on: EmployeeCode
+        right_on: EmployeeCode
+        suffixes: ["","_x"]
+      dataset_filter2:
+        switch: true
+        expression: df.loc[(df['PeriodStart']>=df['StartDate']) & (df['PeriodEnd']<=df['EndDate'])]
+      simple_pandas_grouper:
+        switch: true
+        keys: [ClientPayCodeDescription]
+        group_settings:
+          PayCode: last
+          PayCategory: last
+          Is Base Hours?: last
+      create_columns:
+        switch: true
+        IsPartOfOrdinaryTimeEarnings:
+          column: ''
+          value: 'False'
+          dtype: string
+        IsPartOfTotalSalary:
+          column: ''
+          value: 'False'
+          dtype: string
+        IsSubjectToPayrollTax:
+          column: ''
+          value: 'False'
+          dtype: string
+        IsBonusOrCommission:
+          column: ''
+          value: 'False'
+          dtype: string
+        IsPartOfLslBase:
+          column: ''
+          value: 'False'
+          dtype: string
+      value_mapper:
+        switch: true
+        map_to_col_value: False
+        value_mapping: {1: "True",0: "False"}
+        use_regex: False
+        source_col: 'Is Base Hours?'
+        target_col: 'Is Base Hours?'
+    settings:
+      - staging_two: ClientPayCodeDescription
+        final: ClientPayCodeDescription
+        type: string
+        plugin: {}
+      - staging_two: PayCode
+        final: PayCode
+        type: string
+        plugin: {}
+      - staging_two: PayCategory
+        final: PayCategory
+        type: string
+        plugin: {}
+      - staging_two: IsPartOfOrdinaryTimeEarnings
+        final: IsPartOfOrdinaryTimeEarnings
+        type: string
+        plugin: {}
+      - staging_two: IsPartOfTotalSalary
+        final: IsPartOfTotalSalary
+        type: string
+        plugin: {}
+      - staging_two: IsSubjectToPayrollTax
+        final: IsSubjectToPayrollTax
+        type: string
+        plugin: {}
+      - staging_two: IsBonusOrCommission
+        final: IsBonusOrCommission
+        type: string
+        plugin: {}
+      - staging_two: IsPartOfLslBase
+        final: IsPartOfLslBase
+        type: string
+        plugin: {}
+      - staging_two: Is Base Hours?
+        final: IsBaseHours
+        type: string
+        plugin: {}
+  attributes_over_time:
+    switch: True
+    sources: timesheets
+    function:
+      dataset_filter:
+        switch: true
+        expression: df.loc[df['Award']=='Oberon Victoria 2014 EA']
+      attributes_over_time_formatter:
+        switch: true
+        key_col_list: [EmployeeCode,ClockedIn,ClockedOut]
+        attributes_col_list: ['Location Attribute']
+      OBERON_split_shift_attribute:
+        switch: true
+    settings:
+      - staging_two: EmployeeCode
+        final: EmployeeCode
+        type: string
+        plugin: {}
+      - staging_two: ClockedIn
+        final: StartDate
+        type: datetime
+        plugin: {}
+      - staging_two: ClockedOut
+        final: EndDate
+        type: datetime
+        plugin: {}
+      - staging_two: Attribute
+        final: Attribute
+        type: string
+        plugin: {}
+###### Load ######
+Load:
+  Configuration:
+    switch: true
+    ClientId: Oberon
+    BypassVarianceValidators: False
+  EmployeeBase:
+    switch: true
+    source: masterEMP
+    test:
+      test_duplicated_data:
+        switch: true
+        subset: ['EmployeeCode']
+        tolerance_number_of_duplicate_records: 0
+      test_data_source:
+        switch: true
+        tolerance_irrelevant_file: []
+      test_column_and_datatype:
+        switch: true
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: []
+      test_null_values:
+        switch: true
+        tolerance_null_values: []
+      test_overlapping:
+        switch: true
+        group_records: False
+        key: EmployeeCode
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_overlapping:
+        switch: true
+        group_records: False
+        key: EmployeeCode
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: true
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_cross_dataset_period_check:
+        switch: true
+        compare_with: []
+        tolarance_employee_code: []
+      test_membership:
+        switch: true
+      test_cross_dataset_period:
+        switch: true
+    settings:
+      - final: EmployeeCode
+        type: string
+      - final: StartDate
+        type: iso
+      - final: EndDate
+        type: iso
+      - final: DateOfBirth
+        type: iso
+      - final: Source
+        type: string
+  EmployeeClassification:
+    switch: True
+    source: masterSMN
+    test:
+      test_duplicated_data:
+        switch: True
+        tolerance_number_of_duplicate_records: 0
+        subset: ['all']
+      test_data_source:
+        switch: true
+        tolerance_irrelevant_file: [
+          Pay Point Progression 2014/2017 EN/RN,
+          Pay Point Progression 2014 non EN/RN,
+          Pay Point Progression 2017 non EN/RN
+        ]
+      test_column_and_datatype:
+        switch: true
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: ['Source']
+      test_null_values:
+        switch: true
+        tolerance_null_values: []
+      test_overlapping:
+        switch: False
+        group_records: False
+        key: EmployeeCode
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: true
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_membership:
+        switch: true
+      test_cross_dataset_period:
+        switch: true
+    settings:
+      - final: EmployeeCode
+        type: string
+      - final: StartDate
+        type: iso
+      - final: EndDate
+        type: iso
+      - final: Classification
+        type: string
+      - final: Award
+        type: string
+  EmployeeEmploymentType:
+    switch: true
+    source: masterPOS
+    test:
+      test_duplicated_data:
+        switch: true
+        tolerance_number_of_duplicate_records: 0
+        subset: [['EmployeeCode','StartDate','EmploymentType'],['EmployeeCode','EndDate','EmploymentType']]
+      test_data_source:
+        switch: true
+        tolerance_irrelevant_file: [] 
+      test_column_and_datatype:
+        switch: true
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: [Source]
+      test_null_values:
+        switch: true
+        tolerance_null_values: []
+      test_overlapping:
+        switch: true
+        group_records: False
+        key: EmployeeCode
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: ['323798','330368']
+      test_enddate_before_startdate:
+        switch: true
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_membership:
+        switch: true
+      test_cross_dataset_period:
+        switch: true
+    settings:
+      - final: EmployeeCode
+        type: string
+      - final: StartDate
+        type: iso
+      - final: EndDate
+        type: iso
+      - final: EmploymentType
+        type: string
+  EmployeeSetoffStrategy:
+    switch: True
+    source: setoffstrategy
+    test:
+      test_duplicated_data:
+        switch: true
+        tolerance_number_of_duplicate_records: 0
+        subset: [['EmployeeCode','StartDate','StrategyName'],['EmployeeCode','EndDate','StrategyName']]
+      test_data_source:
+        switch: true
+        tolerance_irrelevant_file: []
+      test_column_and_datatype:
+        switch: true
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: []
+      test_null_values:
+        switch: true
+        tolerance_null_values: []
+      test_overlapping:
+        switch: true
+        group_records: False
+        key: EmployeeCode
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: true
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_membership:
+        switch: true
+      test_cross_dataset_period:
+        switch: true
+    settings:
+      - final: EmployeeCode
+        type: string
+      - final: StartDate
+        type: iso
+      - final: EndDate
+        type: iso
+      - final: StrategyName
+        type: string
+  EmployeeRatesOverTime:
+    switch: true
+    source: masterSMN_Hourly_Rate
+    test:
+      test_duplicated_data:
+        switch: true
+        tolerance_number_of_duplicate_records: 0
+        subset: [['EmployeeCode','StartDate','BaseRate'],['EmployeeCode','EndDate','BaseRate']]
+      test_data_source:
+        switch: true
+        tolerance_irrelevant_file: []
+      test_column_and_datatype:
+        switch: true
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: [Source]
+      test_null_values:
+        switch: true
+        tolerance_null_values: []
+      test_overlapping:
+        switch: true
+        group_records: False
+        key: EmployeeCode
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: true
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_membership:
+        switch: true
+      test_cross_dataset_period:
+        switch: true
+    settings:
+      - final: EmployeeCode
+        type: string
+      - final: StartDate
+        type: iso
+      - final: EndDate
+        type: iso
+      - final: BaseRate
+        type: numeric
+  EmployeeCohortsOverTime:
+    switch: true
+    source: cohort
+    test:
+      test_duplicated_data:
+        switch: true
+        tolerance_number_of_duplicate_records: 0
+        subset: [['EmployeeCode','StartDate','Cohort'],['EmployeeCode','EndDate','Cohort']]
+      test_data_source:
+        switch: true
+        tolerance_irrelevant_file: []
+      test_column_and_datatype:
+        switch: true
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: []
+      test_null_values:
+        switch: true
+        tolerance_null_values: []
+      test_overlapping:
+        switch: false
+        group_records: False
+        key: [EmployeeCode,Cohort]
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: true
+        start: StartDate
+        end: EndDate
+        tolarance_employee_code: []
+      test_membership:
+        switch: true
+      test_cross_dataset_period:
+        switch: true
+    settings:
+      - final: EmployeeCode
+        type: string
+      - final: StartDate
+        type: iso
+      - final: EndDate
+        type: iso
+      - final: Cohort
+        type: string
+  Leave:
+    switch: true
+    source: leave
+    test:
+      test_duplicated_data:
+        switch: true
+        tolerance_number_of_duplicate_records: 0
+        subset: ['all']
+      test_data_source:
+        switch: true
+        tolerance_irrelevant_file: [Timesheets - NSW - 20211001 to 20211231.csv,
+                                    Timesheets - NT - 20211001 to 20211231.csv,
+                                    Timesheets - QLD - 20211001 to 20211231.csv,
+                                    Timesheets - SA - 20211001 to 20211231.csv,
+                                    Timesheets - TAS - 20211001 to 20211231.csv,
+                                    Timesheets - WA - 20211001 to 20211231.csv,
+                                    Timesheets - NSW - 20220101 to 20220331.csv,
+                                    Timesheets - NT - 20220101 to 20220331.csv,
+                                    Timesheets - QLD - 20220101 to 20220331.csv,
+                                    Timesheets - TAS - 20220101 to 20220331.csv,
+                                    Timesheets - WA - 20220101 to 20220331.csv,
+                                    Timesheets - NSW - 20220401 to 20220630.csv,
+                                    Timesheets - NT - 20220401 to 20220630.csv,
+                                    Timesheets - QLD - 20220401 to 20220630.csv,
+                                    Timesheets - SA - 20220401 to 20220630.csv,
+                                    Timesheets - TAS - 20220401 to 20220630.csv,
+                                    Timesheets - WA - 20220401 to 20220630.csv,
+                                    Timesheets - NSW - 20180701 to 20190630.csv,
+                                    Timesheets - NSW - 20190701 to 20200630.csv,
+                                    Timesheets - NSW - 20200701 to 20210630.csv,
+                                    Timesheets - NSW - 20210701 to 20210930.csv,
+                                    Timesheets - NT - 20150701 to 20160630.csv,
+                                    Timesheets - NT - 20160701 to 20170630.csv,
+                                    Timesheets - NT - 20170701 to 20180630.csv,
+                                    Timesheets - NT - 20180701 to 20190630.csv,
+                                    Timesheets - NT - 20190701 to 20200630.csv,
+                                    Timesheets - NT - 20200701 to 20210630.csv,
+                                    Timesheets - NT - 20210701 to 20210930.csv,
+                                    Timesheets - QLD - 20150701 to 20160630.csv,
+                                    Timesheets - QLD - 20190701 to 20200630.csv,
+                                    Timesheets - SA - 20150701 to 20160630.csv,
+                                    Timesheets - SA - 20160701 to 20170630.csv,
+                                    Timesheets - SA - 20170701 to 20180630.csv,
+                                    Timesheets - SA - 20180701 to 20190630.csv,
+                                    Timesheets - SA - 20190701 to 20200630.csv,
+                                    Timesheets - SA - 20200701 to 20210630.csv,
+                                    Timesheets - SA - 20210701 to 20210930.csv,
+                                    Timesheets - TAS - 20150701 to 20160630.csv,
+                                    Timesheets - TAS - 20160701 to 20170630.csv,
+                                    Timesheets - TAS - 20170701 to 20180630.csv,
+                                    Timesheets - TAS - 20190701 to 20200630.csv,
+                                    Timesheets - TAS - 20210701 to 20210930.csv,
+                                    Timesheets - WA - 20150701 to 20160630.csv,
+                                    Timesheets - WA - 20170701 to 20180630.csv,
+                                    Timesheets - WA - 20190701 to 20200630.csv,
+                                    Timesheets - WA - 20210701 to 20210930.csv,
+                                    Manually Added Easter Saturday]
+      test_column_and_datatype:
+        switch: true
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: []
+      test_null_values:
+        switch: true
+        tolerance_null_values: [
+                                LeaveType,
+                                Shift Type,
+                                attribute_personal_leave_taken_ranking,
+                                attribute_personal_leave_conversion,
+                                attribute_is_paid_personal_leave,
+                                Profile,
+                                Breaks Length,
+                                Net Length,
+                                Actual Start Time,
+                                Actual End Time,
+                                Comments,
+                                Employment Type,
+                                Department,
+                                Area,
+                                Role,
+                                Hourly Rate,
+                                Status,
+                                PayCode,
+                                ClientPayCodeDescription,
+                                financial year,	
+                                UID
+                                ]
+      test_overlapping:
+        switch: true
+        group_records: False
+        key: EmployeeCode
+        start: Start
+        end: End
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: true
+        start: Start
+        end: End
+        tolarance_employee_code: []
+      test_membership:
+        switch: true
+      test_cross_dataset_period:
+        switch: true
+    settings:
+      - final: EmployeeCode
+        type: string
+      - final: Start
+        type: iso
+      - final: End
+        type: iso
+      - final: PayCode
+        type: string
+      - final: ClientPayCodeDescription
+        type: string
+      - final: Source
+        type: string
+      - final: LeaveType
+        type: string
+      - final: Shift Type
+        type: string
+      - final: financial year
+        type: string
+      - final: attribute_personal_leave_taken_ranking
+        type: string
+      - final: attribute_personal_leave_conversion
+        type: string
+      - final: attribute_is_paid_personal_leave
+        type: string
+      - final: Breaks Length
+        type: numeric
+      - final: Net Length
+        type: numeric
+      - final: Profile
+        type: string
+      - final: Actual Start Time
+        type: iso
+      - final: Actual End Time
+        type: iso
+      - final: Comments
+        type: string
+      - final: Employment Type
+        type: string
+      - final: Department
+        type: string
+      - final: Area
+        type: string
+      - final: Role
+        type: string
+      - final: Hourly Rate
+        type: string
+      - final: Status
+        type: string
+      - final: UID
+        type: string
+  Payslip:
+    switch: true
+    source: payslips
+    test:
+      test_duplicated_data:
+        switch: true
+        tolerance_number_of_duplicate_records: 0
+        subset: ['all']
+      test_data_source:
+        switch: true
+        tolerance_irrelevant_file: [Subject to LPP - PIT - 20070701 to 20080630.csv,
+                                    Subject to LPP - PIT - 20080701 to 20090630.csv,
+                                    Subject to LPP - PIT - 20090701 to 20100630.csv,
+                                    Subject to LPP - PIT - 20100701 to 20110630.csv,
+                                    Subject to LPP - PIT - 20110701 to 20120630.csv,
+                                    Subject to LPP - PIT - 20120701 to 20130630.csv,
+                                    Subject to LPP - PIT - 20130701 to 20140630.csv,
+                                    Subject to LPP - PIT - 20140701 to 20150630.csv,
+                                    Subject to LPP - PIT - Data Crush Rerun 4 Employees 20150701 to 20220331.csv,
+                                    Privileged & Confidential - Subject to LPP - PIT - 20220101 to 20220331.csv,
+                                    Privileged  Confidential - Subject to LPP - PIT - 20220101 to 20220331.csv]
+      test_column_and_datatype:
+        switch: true
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: []
+      test_null_values:
+        switch: true
+        tolerance_null_values: [overlapping_index,is_overlapping,PayCycle]
+      test_overlapping:
+        switch: true
+        group_records: True
+        key: EmployeeCode
+        start: PeriodStart
+        end: PeriodEnd
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: true
+        start: PeriodStart
+        end: PeriodEnd
+        tolarance_employee_code: []
+      test_membership:
+        switch: true
+      test_cross_dataset_period:
+        switch: true
+    settings:
+      - final: EmployeeCode
+        type: string
+      - final: PayslipCode
+        type: string
+      - final: PayslipLineCode
+        type: string
+      - final: PeriodStart
+        type: iso
+      - final: PeriodEnd
+        type: iso
+      - final: PayCode
+        type: string
+      - final: Description
+        type: string
+      - final: ClientPayCodeDescription
+        type: string
+      - final: Hours
+        type: numeric
+      - final: Amount
+        type: numeric
+      - final: Classification
+        type: string
+      - final: Source
+        type: string
+      - final: IsBaseHours
+        type: string
+      - final: overlapping_index
+        type: string
+      - final: is_overlapping
+        type: string
+      - final: PayRunCode
+        type: string
+      - final: PayCycle
+        type: string
+  Timesheet:
+    switch: true
+    source: timesheets
+    test:
+      test_duplicated_data:
+        switch: true
+        tolerance_number_of_duplicate_records: 0
+        subset: ['all']
+      test_data_source:
+        switch: False
+        tolerance_irrelevant_file: []
+      test_column_and_datatype:
+        switch: true
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: []
+      test_null_values:
+        switch: true
+        tolerance_null_values: [
+          RosteredIn,
+          RosteredOut,
+          UnpaidBreaks, 
+          is_Training_Shift,
+          is_Sleepover_Shift,
+          is_Overlapping_Shift_Longest_Shift_Picked,
+          is_Broken_Shift,
+          broken_shift_detail,
+          Breaks Length,
+          Net Length,
+          Shift Type,
+          Profile,
+          Actual Start Time,
+          Actual End Time,
+          Comments,
+          Employment Type,
+          Department,
+          Area,
+          Role,
+          Hourly Rate,
+          Status,
+          Additional Public Holiday,
+          holiday_regions,
+          holiday_name,
+          holiday_date,
+          worked_percentage_in_last_6_month
+          ]
+      test_overlapping:
+        switch: True
+        group_records: False
+        key: EmployeeCode
+        start: ClockedIn
+        end: ClockedOut
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: true
+        start: ClockedIn
+        end: ClockedOut
+        tolarance_employee_code: []
+      test_timesheet_short_shifts:
+        switch: false
+        tolerance_shift_minimum_length: 0 # minutes
+      test_timesheet_long_shifts:
+        switch: false
+        tolerance_shift_maximum_length: 14  # hours
+      test_membership:
+        switch: True
+      test_cross_dataset_period:
+        switch: true
+    settings: 
+      - final: EmployeeCode
+        type: string
+      - final: Award
+        type: string
+      - final: ClockedIn
+        type: iso
+      - final: ClockedOut
+        type: iso
+      - final: RosteredIn
+        type: iso
+      - final: RosteredOut
+        type: iso
+      - final: UnpaidBreaks
+        type: string
+      - final: Region
+        type: string
+      - final: Source
+        type: string
+      - final: shift_index
+        type: string
+      - final: is_Training_Shift
+        type: string
+      - final: is_Sleepover_Shift
+        type: string
+      - final: is_Overlapping_Shift_Longest_Shift_Picked
+        type: string
+      - final: is_Broken_Shift
+        type: string
+      - final: broken_shift_detail
+        type: string
+      - final: week_number
+        type: numeric
+      - final: week_day
+        type: numeric
+      - final: week_info
+        type: string
+      - final: Additional Public Holiday
+        type: string
+      - final: holiday_regions
+        type: string
+      - final: holiday_name
+        type: string
+      - final: holiday_date
+        type: string
+      - final: worked_percentage_in_last_6_month
+        type: numeric
+      - final: Breaks Length
+        type: numeric
+      - final: Net Length
+        type: numeric
+      - final: Shift Type
+        type: string
+      - final: Profile
+        type: string
+      - final: Actual Start Time
+        type: iso
+      - final: Actual End Time
+        type: iso
+      - final: Comments
+        type: string
+      - final: Employment Type
+        type: string
+      - final: Department
+        type: string
+      - final: Area
+        type: string
+      - final: Role
+        type: string
+      - final: Hourly Rate
+        type: string
+      - final: Status
+        type: string
+      - final: UID
+        type: string
+  PayCodes:
+    switch: true
+    source: paycodes
+    test:
+      test_duplicated_data:
+        switch: False
+        tolerance_number_of_duplicate_records: 0
+        subset: ['ClientPayCodeDescription']
+      test_data_source:
+        switch: False
+        tolerance_irrelevant_file: []
+      test_column_and_datatype:
+        switch: False
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: []
+      test_null_values:
+        switch: False
+        tolerance_null_values: []
+      test_overlapping:
+        switch: False
+        group_records: False
+        key: ''
+        start: ''
+        end: ''
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: False
+        start: ''
+        end: ''
+        tolarance_employee_code: []
+      test_membership:
+        switch: False
+      test_cross_dataset_period:
+        switch: False
+    settings:
+      - final: ClientPayCodeDescription
+        type: string
+      - final: PayCode
+        type: string
+      - final: PayCategory
+        type: string
+      - final: IsPartOfOrdinaryTimeEarnings
+        type: string
+      - final: IsPartOfTotalSalary
+        type: string
+      - final: IsSubjectToPayrollTax
+        type: string
+      - final: IsBonusOrCommission
+        type: string
+      - final: IsPartOfLslBase
+        type: string
+      - final: IsBaseHours
+        type: string
+  EmployeeAttributesOverTime:
+    switch: true
+    source: attributes_over_time
+    test:
+      test_duplicated_data:
+        switch: false
+        tolerance_number_of_duplicate_records: 0
+        subset: [all]
+      test_data_source:
+        switch: True
+        tolerance_irrelevant_file: []
+      test_column_and_datatype:
+        switch: True
+        tolerance_change_dtype: {}
+        tolerance_irrelevant_columns: []
+      test_null_values:
+        switch: True
+        tolerance_null_values: []
+      test_overlapping:
+        switch: False
+        group_records: False
+        key: ''
+        start: ''
+        end: ''
+        tolarance_employee_code: []
+      test_enddate_before_startdate:
+        switch: False
+        start: ''
+        end: ''
+        tolarance_employee_code: []
+      test_membership:
+        switch: True
+      test_cross_dataset_period:
+        switch: True
+    settings:
+      - final: EmployeeCode
+        type: string
+      - final: StartDate
+        type: iso
+      - final: EndDate
+        type: iso
+      - final: Attribute
+        type: string
+ 
+

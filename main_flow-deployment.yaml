@@ -1,0 +1,42 @@
+###
+### A complete description of a Prefect Deployment for flow 'Oberon'
+###
+name: oberon
+description: |-
+  pipeline main flow
+
+  Parameters
+  ----------
+  config : dict
+      project yaml file
+version: test 1.0
+# The work queue that will handle this deployment's runs
+work_queue_name: test_queue
+tags: []
+parameters: {}
+schedule: null
+infra_overrides: {}
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  block_type_slug: process
+  _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: Oberon
+manifest_path: null
+storage: null
+path: /home/playground
+entrypoint: yclib/main.py:main_flow
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties: {}
+  required: null
+  definitions: null

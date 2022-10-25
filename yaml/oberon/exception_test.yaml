@@ -1,0 +1,79 @@
+test_to_check_exceptions:
+  exception_report_path: "/home/project/playground_output/wilmot"
+  schema: exception_test_result
+  datasets:
+    payslips:
+      validation_tests:
+        non_nan: []
+        non_numeric: []
+        non_positive: []
+        non_datetime: []
+        non_isacii:
+        non_duplicate: 
+          subset: []
+        non_overlapping: true
+        broken_records: []
+      inscope_mappings:
+        paycodes: 
+          client_columns: []
+          sentinel_mapping_values:
+        region: 
+          client_columns: []
+          sentinel_mapping_values:
+        employee_classification: 
+          client_columns: []
+          values_in_employee_agreement:
+          cohort_values:
+        employeement_type: 
+          client_columns: []
+          values_in_employee_agreement:
+    timesheets:
+      validation_tests:
+        non_nan: []
+        non_numeric: []
+        non_positive: []
+        non_datetime: []
+        non_isacii:
+        non_duplicate: 
+          subset: []
+        non_overlapping: true
+        broken_records: []
+      inscope_mappings:
+        paycodes: 
+          client_columns: []
+          sentinel_mapping_values:
+        region: 
+          client_columns: []
+          sentinel_mapping_values:
+        employee_classification: 
+          client_columns: []
+          values_in_employee_agreement:
+          cohort_values:
+        employeement_type: 
+          client_columns: []
+          values_in_employee_agreement:
+    master:
+      validation_tests:
+        non_nan: []
+        non_numeric: []
+        non_positive: []
+        non_datetime: []
+        non_isacii:
+        non_duplicate: 
+          subset: []
+        non_overlapping: true
+        broken_records: []
+      inscope_mappings:
+        paycodes: 
+          client_columns: []
+          sentinel_mapping_values:
+        region: 
+          client_columns: []
+          sentinel_mapping_values:
+        employee_classification: 
+          client_columns: []
+          values_in_employee_agreement:
+          cohort_values:
+        employeement_type: 
+          client_columns: []
+          values_in_employee_agreement:

@@ -1,0 +1,84 @@
+data_filter_functions:
+    func1:
+    func2:
+    # ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+    # Testing exceptions
+    test_to_check_exceptions:
+      payslips:
+        validation_tests:
+          non_nan: []
+          non_numeric: []
+          non_positive: []
+          non_datetime: []
+          non_isacii:
+          non_duplicate: 
+            subset: []
+          non_overlapping: true
+          broken_records: []
+        inscope_mappings:
+          paycodes: 
+            client_columns: []
+            sentinel_mapping_values:
+          region: 
+            client_columns: []
+            sentinel_mapping_values:
+          employee_classification: 
+            client_columns: []
+            values_in_employee_agreement:
+            cohort_values:
+          employeement_type: 
+            client_columns: []
+            values_in_employee_agreement:
+      timesheets:
+        validation_tests:
+          non_nan: []
+          non_numeric: []
+          non_positive: []
+          non_datetime: []
+          non_isacii:
+          non_duplicate: 
+            subset: []
+          non_overlapping: true
+          broken_records: []
+        inscope_mappings:
+          paycodes: 
+            client_columns: []
+            sentinel_mapping_values:
+          region: 
+            client_columns: []
+            sentinel_mapping_values:
+          employee_classification: 
+            client_columns: []
+            values_in_employee_agreement:
+            cohort_values:
+          employeement_type: 
+            client_columns: []
+            values_in_employee_agreement:
+      master:
+        validation_tests:
+          non_nan: []
+          non_numeric: []
+          non_positive: []
+          non_datetime: []
+          non_isacii:
+          non_duplicate: 
+            subset: []
+          non_overlapping: true
+          broken_records: []
+        inscope_mappings:
+          paycodes: 
+            client_columns: []
+            sentinel_mapping_values:
+          region: 
+            client_columns: []
+            sentinel_mapping_values:
+          employee_classification: 
+            client_columns: []
+            values_in_employee_agreement:
+            cohort_values:
+          employeement_type: 
+            client_columns: []
+            values_in_employee_agreement:
+    # ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- ----------
+    # Transformations
+  

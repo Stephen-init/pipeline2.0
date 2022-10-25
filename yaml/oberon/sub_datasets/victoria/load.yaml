@@ -1,0 +1,48 @@
+Configuration:
+  switch: true
+  ClientId: Oberon
+  BypassVarianceValidators: False
+EmployeeBase:
+  switch: true
+  transform_dataset: masterEMP
+  final_columns: [EmployeeCode,StartDate,EndDate,DateOfBirth,Source]
+EmployeeClassification:
+  switch: True
+  transform_dataset: masterSMN
+  final_columns: [EmployeeCode,StartDate,EndDate,Classification,Award]
+EmployeeEmploymentType:
+  switch: true
+  transform_dataset: masterPOS
+  final_columns: [EmployeeCode,StartDate,EndDate,EmploymentType]
+EmployeeSetoffStrategy:
+  switch: True
+  transform_dataset: setoffstrategy
+  final_columns: [EmployeeCode,StartDate,EndDate,StrategyName]
+EmployeeRatesOverTime:
+  switch: true
+  transform_dataset: masterSMN_Hourly_Rate
+  final_columns: [EmployeeCode,StartDate,EndDate,BaseRate]
+EmployeeCohortsOverTime:
+  switch: true
+  transform_dataset: cohort
+  final_columns: [EmployeeCode,StartDate,EndDate,Cohort]
+Leave:
+  switch: true
+  transform_dataset: leave
+  final_columns: [EmployeeCode,Start,End,PayCode,ClientPayCodeDescription,Source,LeaveType]
+Payslip:
+  switch: true
+  transform_dataset: payslips
+  final_columns: [EmployeeCode,PayslipCode,PayslipLineCode,PeriodStart,PeriodEnd,PayCode,Description,ClientPayCodeDescription,Hours,Amount,Classification,Source]
+Timesheet:
+  switch: true
+  transform_dataset: timesheets
+  final_columns: [EmployeeCode,ClockedIn,ClockedOut,RosteredIn,RosteredOut,UnpaidBreaks,Region,Source]
+PayCodes:
+  switch: true
+  transform_dataset: paycodes
+  final_columns: [ClientPayCodeDescription,PayCode,PayCategory,IsPartOfOrdinaryTimeEarnings,IsPartOfTotalSalary,IsSubjectToPayrollTax,IsBonusOrCommission,IsPartOfLslBase,IsBaseHours]
+EmployeeAttributesOverTime:
+  switch: true
+  transform_dataset: paycodes
+  final_columns: [EmployeeCode,StartDate,EndDate,Attribute]
